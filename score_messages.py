@@ -2,6 +2,18 @@
 # Keyword scoring logic for LinkedIn message prioritization
 
 import re
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+import nltk
+
+for resource in ['punkt', 'punkt_tab']:
+    try:
+        nltk.data.find(f'tokenizers/{resource}')
+    except LookupError:
+        print(f"Downloading '{resource}'...")
+        nltk.download(resource, force=True)
+
+stemmer = PorterStemmer()
 
 scoring_rules = {
     # Positive Keywords (Important)
@@ -9,9 +21,7 @@ scoring_rules = {
     "project": 10,
     "portfolio": 10,
     "hire": 15,
-    "hiring": 15,
     "collaboration": 10,
-    "collaborating": 10,
     "interview": 15,
     "work": 5,
     "team": 5,
@@ -26,15 +36,20 @@ scoring_rules = {
     "hello": -5
 }
 
+stemmed_rules = {stemmer.stem(keyword): value for keyword, value in scoring_rules.items()}
+
 def score_message(message):
     score = 0
     message_lower = message.lower()
     print(f"\nProcessing: {message}")
+
+    words = word_tokenize(message_lower)
+    stemmed_words = [stemmer.stem(word) for word in words]
+    print(f"Stemmed words: {stemmed_words}")
     
-    for keyword, value in sorted(scoring_rules.items(), key=lambda x: -len(x[0])):
-        match = re.search(rf"\b{keyword}\b", message_lower)
-        if match:
-            print(f"Matched '{keyword}' at {match.span()} with '{match.group()}' = {value}")
+    for stemmed_keyword, value in stemmed_rules.items():
+        if stemmed_keyword in stemmed_words:
+            print(f"Matched '{stemmed_keyword}' = {value}")
             score += value
     
     # Bonuses
@@ -42,9 +57,9 @@ def score_message(message):
     if url_match:
         print(f"Matched URL at {url_match.span()} = +5")
         score += 5
-    words = message_lower.split()
-    print(f"Word count: {len(words)}")
-    if len(words) > 20:
+    word_count = len(words)
+    print(f"Word count: {word_count}")
+    if word_count > 20:
         print("Long message (>20 words): +3")
         score += 3
     num_match = re.search(r"\d", message_lower)
@@ -65,3 +80,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
