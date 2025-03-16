@@ -1,7 +1,5 @@
 # DM-Priority Tool
 
-![First Test Screenshot](./images/first-test.png)
-
 A Python-based tool to help prioritize and organize LinkedIn direct messages (DMs) efficiently. Designed for users receiving 50-150 messages weekly, it separates genuine outreach (e.g., job offers with resumes or project links) from noise (e.g., sales pitches or casual "how are you" messages).
 
 ## Problem Statement
@@ -23,3 +21,11 @@ User receive 50-150 LinkedIn messages per week. Some are generic sales pitches o
 
 - Python: Core language for scripting and logic. 
 - re: Regular expressions for basic text pattern matching.
+
+## Progressive Results
+
+- Initial Keyword scoring
+![First Test Screenshot](./images/first-test.png)
+
+- Added Bonuses and Penalty
+![Second Test Screenshot](./images/second-test.png)
