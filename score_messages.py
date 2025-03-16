@@ -88,12 +88,25 @@ def read_messages(file_path):
     print(f"Read {len(messages)} messages from {file_path}")
     return messages
 
+def categorize_message(score):
+    """Assign a category based on score."""
+    if score >= 15:
+        return "Priority"
+    elif score >= 0:
+        return "Maybe"
+    else:
+        return "Spam"
+
 def main():
     file_path = "test_messages.txt"  
     messages = read_messages(file_path)
-    for msg in messages:
-        score = score_message(msg)
-        print(f"Message: {msg} | Score: {score}")
+
+    results = [{"message": msg, "score": score_message(msg)} for msg in messages]
+    sorted_results = sorted(results, key=lambda x: x["score"], reverse=True)
+
+    for result in sorted_results:
+        result["category"] = categorize_message(result["score"])
+        print(f"Message: {result['message']} | Score: {result['score']} | Category: {result['category']}")
 
 if __name__ == "__main__":
     main()

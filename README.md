@@ -39,3 +39,7 @@ User receive 50-150 LinkedIn messages per week. Some are generic sales pitches o
 - Integrated scoring logic with file input
 
 ![Fourth Test Screenshot](./images/fourth-test.png)
+
+- Add sorting and categorization of scored messages
+
+![Fifth Test Screenshot](./images/fifth-test.png)
