@@ -33,7 +33,7 @@ scoring_rules = {
     "free": -10,
     "hi": -5,
     "how are you": -5,
-    "hello": -5
+    "hello": -2,
 }
 
 stemmed_rules = {stemmer.stem(keyword): value for keyword, value in scoring_rules.items()}
@@ -59,7 +59,7 @@ def score_message(message):
         score += 5
     word_count = len(words)
     print(f"Word count: {word_count}")
-    if word_count > 20:
+    if word_count >= 20:
         print("Long message (>20 words): +3")
         score += 3
     num_match = re.search(r"\d", message_lower)
@@ -83,6 +83,11 @@ def main():
         "Collaborating on a project sounds great",
         "Hi there",  
         "BUY NOW!",
+        "Check out my resume at http://example.com",        
+        "Free discount offer today only",                    
+        "Hello, interested in hiring you for a team project with 3 roles",  
+        "This is a long message about collaborating on a project with over 20 words to test the bonus rule",  
+        "SALES PITCH HERE"                                   
     ]
     for msg in test_messages:
         score = score_message(msg)
