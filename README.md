@@ -35,3 +35,7 @@ User receive 50-150 LinkedIn messages per week. Some are generic sales pitches o
 - Added Penalty
   
 ![Third Test Screenshot](./images/third-test.png)
+
+- Integrated scoring logic with file input
+
+![Fourth Test Screenshot](./images/fourth-test.png)

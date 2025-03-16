@@ -42,38 +42,29 @@ stemmed_rules = {stemmer.stem(keyword): value for keyword, value in scoring_rule
 def score_message(message):
     score = 0
     message_lower = message.lower()
-    print(f"\nProcessing: {message}")
 
     words = word_tokenize(message_lower)
     stemmed_words = [stemmer.stem(word) for word in words]
-    print(f"Stemmed words: {stemmed_words}")
     
     for stemmed_keyword, value in stemmed_rules.items():
-        if stemmed_keyword in stemmed_words:
-            print(f"Matched '{stemmed_keyword}' = {value}")
+       if " " not in stemmed_keyword and stemmed_keyword in stemmed_words:
             score += value
     
     # Bonuses
     url_match = re.search(r"http[s]?://|www\.|\.com", message_lower)
     if url_match:
-        print(f"Matched URL at {url_match.span()} = +5")
         score += 5
     word_count = len(words)
-    print(f"Word count: {word_count}")
     if word_count >= 20:
-        print("Long message (>20 words): +3")
         score += 3
     num_match = re.search(r"\d", message_lower)
     if num_match:
-        print(f"Matched number at {num_match.span()} = +2")
         score += 2
     
     # Penalties
     if word_count < 5:
-        print("Short message (<5 words): -5")
         score -= 5
     if message.strip() and message == message.upper() and any(c.isalpha() for c in message):
-        print("All caps message: -3")
         score -= 3
 
     return score
@@ -101,7 +92,8 @@ def main():
     file_path = "test_messages.txt"  
     messages = read_messages(file_path)
     for msg in messages:
-        print(f"Message: {msg}")
+        score = score_message(msg)
+        print(f"Message: {msg} | Score: {score}")
 
 if __name__ == "__main__":
     main()
