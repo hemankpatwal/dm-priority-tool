@@ -1,1 +1,3 @@
-*.csv
+scored_messages.csv
+__pycache__/
+*.pyc
