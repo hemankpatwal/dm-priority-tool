@@ -5,6 +5,7 @@ import re
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 import nltk
+import pandas as pd
 
 for resource in ['punkt', 'punkt_tab']:
     try:
@@ -77,21 +78,30 @@ def score_message(message):
 
     return score
 
+def read_messages(file_path):
+    """Read messages from a CSV or TXT file into a list."""
+    messages = []
+    try:
+        df = pd.read_csv(file_path)
+        if 'message' in df.columns:
+            messages = df['message'].dropna().tolist()
+        else:
+            raise ValueError("CSV file must have a 'message' column")
+    except (pd.errors.EmptyDataError, ValueError, FileNotFoundError):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                messages = [line.strip() for line in f if line.strip()]
+        except FileNotFoundError:
+            print(f"Error: File '{file_path}' not found.")
+            return []
+    print(f"Read {len(messages)} messages from {file_path}")
+    return messages
+
 def main():
-    test_messages = [
-        "Hiring you for a project with 2 years experience",
-        "Collaborating on a project sounds great",
-        "Hi there",  
-        "BUY NOW!",
-        "Check out my resume at http://example.com",        
-        "Free discount offer today only",                    
-        "Hello, interested in hiring you for a team project with 3 roles",  
-        "This is a long message about collaborating on a project with over 20 words to test the bonus rule",  
-        "SALES PITCH HERE"                                   
-    ]
-    for msg in test_messages:
-        score = score_message(msg)
-        print(f"Message: {msg} | Score: {score}")
+    file_path = "test_messages.txt"  
+    messages = read_messages(file_path)
+    for msg in messages:
+        print(f"Message: {msg}")
 
 if __name__ == "__main__":
     main()
