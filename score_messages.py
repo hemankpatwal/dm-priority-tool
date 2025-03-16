@@ -67,12 +67,22 @@ def score_message(message):
         print(f"Matched number at {num_match.span()} = +2")
         score += 2
     
+    # Penalties
+    if word_count < 5:
+        print("Short message (<5 words): -5")
+        score -= 5
+    if message.strip() and message == message.upper() and any(c.isalpha() for c in message):
+        print("All caps message: -3")
+        score -= 3
+
     return score
 
 def main():
     test_messages = [
         "Hiring you for a project with 2 years experience",
-        "Collaborating on a project sounds great"
+        "Collaborating on a project sounds great",
+        "Hi there",  
+        "BUY NOW!",
     ]
     for msg in test_messages:
         score = score_message(msg)

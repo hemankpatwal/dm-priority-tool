@@ -27,5 +27,8 @@ User receive 50-150 LinkedIn messages per week. Some are generic sales pitches o
 - Initial Keyword scoring
 ![First Test Screenshot](./images/first-test.png)
 
-- Added Bonuses and Penalty
+- Added Bonuses
 ![Second Test Screenshot](./images/second-test.png)
+
+- Added Penalty
+![Third Test Screenshot](./images/third-test.png)
