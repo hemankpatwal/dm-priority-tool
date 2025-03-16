@@ -96,6 +96,15 @@ def categorize_message(score):
         return "Maybe"
     else:
         return "Spam"
+    
+def save_results(results, output_file="scored_messages.csv"):
+    """Save sorted and categorized results to a CSV file."""
+    try:
+        df = pd.DataFrame(results, columns=["message", "score", "category"])
+        df.to_csv(output_file, index=False)
+        print(f"Saved results to {output_file}")
+    except Exception as e:
+        print(f"Error saving to {output_file}: {e}")
 
 def main():
     file_path = "test_messages.txt"  
@@ -108,6 +117,7 @@ def main():
         result["category"] = categorize_message(result["score"])
         print(f"Message: {result['message']} | Score: {result['score']} | Category: {result['category']}")
 
+    save_results(sorted_results)
 if __name__ == "__main__":
     main()
 

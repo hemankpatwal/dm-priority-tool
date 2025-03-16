@@ -21,6 +21,7 @@ User receive 50-150 LinkedIn messages per week. Some are generic sales pitches o
 
 - Python: Core language for scripting and logic. 
 - re: Regular expressions for basic text pattern matching.
+- nltk: Natural Language Toolkit (NLTK) to handle keywords variations.
 
 ## Progressive Results
 
@@ -43,3 +44,7 @@ User receive 50-150 LinkedIn messages per week. Some are generic sales pitches o
 - Add sorting and categorization of scored messages
 
 ![Fifth Test Screenshot](./images/fifth-test.png)
+
+- Add output to file for sorted results
+
+![Sixth Test Screenshot](./images/sixth-test.png)
