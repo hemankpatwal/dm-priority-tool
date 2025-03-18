@@ -46,6 +46,7 @@
         <h1>LinkedIn Message Prioritizer</h1>
         
         <div class="form-section">
+            <h3>Score a Message</h3>
             <form id="scoreForm" onsubmit="scoreMessage(event)">
                 <div class="mb-3">
                     <label for="messageInput" class="form-label">Enter a Message to Score:</label>
@@ -56,8 +57,26 @@
             <div id="result"></div>
         </div>
 
+        <div class="form-section">
+            <h3>Add Custom Keyword</h3>
+            <form id="keywordForm" onsubmit="addKeyword(event)">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="keywordInput" class="form-label">Keyword:</label>
+                        <input type="text" class="form-control" id="keywordInput" placeholder="e.g., skills">
+                    </div>
+                    <div class="col">
+                        <label for="scoreInput" class="form-label">Score:</label>
+                        <input type="number" class="form-control" id="scoreInput" placeholder="e.g., 10">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Add Keyword</button>
+            </form>
+            <div id="keywordResult"></div>
+        </div>
+
         <div class="table-section">
-            <h3>Previously Scored Messages</h3>
+            <h3>Scored Messages</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -76,6 +95,23 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="keywordModal" tabindex="-1" aria-labelledby="keywordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="keywordModalLabel">Current Keywords</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="keywordItems"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -100,9 +136,75 @@
                 }
             })
             .catch(error => {
-                document.getElementById('result').innerHTML = `<span class="text-danger">Error: ${error}</span>`;
+                document.getElementById('scoreResult').innerHTML = `<span class="text-danger">Error: ${error}</span>`;
             });
         }
+
+        function addKeyword(event) {
+            event.preventDefault();
+            const keyword = document.getElementById('keywordInput').value;
+            const score = document.getElementById('scoreInput').value;
+            const resultDiv = document.getElementById('keywordResult');
+
+            if (!resultDiv) {
+                console.error('keywordResult element not found');
+                return;
+            }
+
+            fetch('/add_keyword', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keyword: keyword, score: score })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerHTML = `<span class="text-danger">${data.error}</span>`;
+                } else {
+                    resultDiv.innerHTML = `<span class="text-success">${data.success}</span>`;
+                    updateTable(data.messages);
+                    loadKeywords();
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<span class="text-danger">Error: ${error}</span>`;
+                console.error('Fetch error:', error);
+            });
+            document.getElementById('keywordForm').reset();
+        }
+
+        function updateTable(messages) {
+            const tbody = document.getElementById('messageTable');
+            tbody.innerHTML = '';
+            messages.forEach(msg => {
+                const row = document.createElement('tr');
+                row.className = msg.category.toLowerCase();
+                row.innerHTML = `
+                    <td>${msg.message}</td>
+                    <td>${msg.score}</td>
+                    <td>${msg.category}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadKeywords() {
+            fetch('/get_keywords')
+            .then(response => response.json())
+            .then(data => {
+                const keywordList = document.getElementById('keywordItems');
+                keywordList.innerHTML = '';
+                for (const [keyword, score] of Object.entries(data.keywords)) {
+                    const li = document.createElement('li');
+                    li.textContent = `${keyword}: ${score}`;
+                    keywordList.appendChild(li);
+                }
+            })
+            .catch(error => console.error('Error loading keywords:', error));
+        }
+
+        // Load keywords on page load
+        document.getElementById('keywordModal').addEventListener('shown.bs.modal', loadKeywords);
     </script>
 </body>
 </html>

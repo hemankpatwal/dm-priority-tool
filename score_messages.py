@@ -70,7 +70,6 @@ def score_message(message):
     return score
 
 def read_messages(file_path):
-    """Read messages from a CSV or TXT file into a list."""
     messages = []
     try:
         df = pd.read_csv(file_path)
@@ -97,27 +96,17 @@ def categorize_message(score):
     else:
         return "Spam"
     
-def save_results(results, output_file="scored_messages.csv"):
-    """Save sorted and categorized results to a CSV file."""
-    try:
-        df = pd.DataFrame(results, columns=["message", "score", "category"])
-        df.to_csv(output_file, index=False)
-        print(f"Saved results to {output_file}")
-    except Exception as e:
-        print(f"Error saving to {output_file}: {e}")
+def update_scoring_rules(keyword, score):
+    global scoring_rules, stemmed_rules
+    scoring_rules[keyword] = int(score)  # Ensure score is an integer
+    stemmed_rules = {stemmer.stem(k): v for k, v in scoring_rules.items()}
 
-def main():
-    file_path = "test_messages.txt"  
+def process_and_save_messages(file_path, output_file="scored_messages.csv"):
     messages = read_messages(file_path)
-
     results = [{"message": msg, "score": score_message(msg)} for msg in messages]
     sorted_results = sorted(results, key=lambda x: x["score"], reverse=True)
-
     for result in sorted_results:
         result["category"] = categorize_message(result["score"])
-        print(f"Message: {result['message']} | Score: {result['score']} | Category: {result['category']}")
-
-    save_results(sorted_results)
-if __name__ == "__main__":
-    main()
-
+    df = pd.DataFrame(sorted_results, columns=["message", "score", "category"])
+    df.to_csv(output_file, index=False)
+    return sorted_results
